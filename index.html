@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>HERE Place Category Search – HERE</title>
+  <title>Here Place Category Search – HERE</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -22,7 +22,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
-    h1 {
+    h1, h2 {
       text-align: center;
       color: #00AFAA;
     }
@@ -56,6 +56,12 @@
       color: #007b7a;
     }
 
+    .no-match {
+      color: #777;
+      text-align: center;
+      font-style: italic;
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -65,10 +71,15 @@
 <body>
 
   <div class="container">
-    <h1>Here Place Category Search</h1>
-    <input type="text" id="searchBox" placeholder="Enter Place Category Code (e.g. 100-1000-0001)" />
+    <h1>HERE Place Category Search</h1>
 
-    <div id="results"></div>
+    <h2>Search by Place Category Code</h2>
+    <input type="text" id="codeSearch" placeholder="Enter Place Category Code (e.g. 100-1000-0001)" />
+    <div id="codeResult"></div>
+
+    <h2>Search by Place Category Name</h2>
+    <input type="text" id="nameSearch" placeholder="Enter Place Category Name (e.g. Fine Dining)" />
+    <div id="nameResult"></div>
   </div>
 
   <script>
@@ -2285,13 +2296,14 @@
   }
 ];
 
-    const searchBox = document.getElementById("searchBox");
-    const resultsDiv = document.getElementById("results");
+    const codeSearch = document.getElementById("codeSearch");
+    const nameSearch = document.getElementById("nameSearch");
+    const codeResult = document.getElementById("codeResult");
+    const nameResult = document.getElementById("nameResult");
 
-    searchBox.addEventListener("input", function () {
+    codeSearch.addEventListener("input", function () {
       const query = this.value.trim().toLowerCase();
-      resultsDiv.innerHTML = "";
-
+      codeResult.innerHTML = "";
       if (query === "") return;
 
       const match = data.find(item =>
@@ -2299,16 +2311,37 @@
       );
 
       if (match) {
-        const resultHTML = `
+        codeResult.innerHTML = `
           <div class="result">
             <h3>${match["Place Category Name"]}</h3>
             <p><strong>Code:</strong> ${match["Place Category Code"]}</p>
             <p>${match["Place Category Defination"]}</p>
           </div>
         `;
-        resultsDiv.innerHTML = resultHTML;
       } else {
-        resultsDiv.innerHTML = `<p>No match found for <strong>${query}</strong>.</p>`;
+        codeResult.innerHTML = `<div class="no-match">No match found for <strong>${query}</strong>.</div>`;
+      }
+    });
+
+    nameSearch.addEventListener("input", function () {
+      const query = this.value.trim().toLowerCase();
+      nameResult.innerHTML = "";
+      if (query === "") return;
+
+      const match = data.find(item =>
+        item["Place Category Name"].toLowerCase().includes(query)
+      );
+
+      if (match) {
+        nameResult.innerHTML = `
+          <div class="result">
+            <h3>${match["Place Category Name"]}</h3>
+            <p><strong>Code:</strong> ${match["Place Category Code"]}</p>
+            <p>${match["Place Category Defination"]}</p>
+          </div>
+        `;
+      } else {
+        nameResult.innerHTML = `<div class="no-match">No match found for <strong>${query}</strong>.</div>`;
       }
     });
   </script>
